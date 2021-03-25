@@ -1,12 +1,15 @@
+# https://stackoverflow.com/questions/22575261/vagrant-stuck-connection-timeout-retrying
 Vagrant.configure("2") do |config|
   config.vm.guest = :freebsd
-  config.vm.synced_folder "./", "/home/vagrant/app", owner: "vagrant", group: "vagrant", disabled: true
+  config.vm.synced_folder ".", "/vagrant", owner: "vagrant", group: "vagrant", disabled: true
   config.vm.box = "freebsd/FreeBSD-12.2-STABLE"
   config.ssh.shell = "sh"
   config.vm.base_mac = "080027D14C66"
 
   config.vm.provider :virtualbox do |vb|
     vb.name = ENV["VIRTUALBOX_NAME"]
+    # vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    # vb.customize ["modifyvm", :id, "--vrde", "on"]
   end
 
   config.vm.provision :shell, :inline => '
@@ -20,6 +23,6 @@ Vagrant.configure("2") do |config|
     echo $? > /vagrant/test/runtimes/TESTRESULT.freebsd.txt
   ', :env => {
     "GOPATH" => "/home/vagrant/go",
-    "GO111MODULE" => "on",
+    # "GO111MODULE" => "on",
   }
 end

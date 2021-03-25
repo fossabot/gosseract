@@ -136,14 +136,16 @@ function test_vagrant_runtimes() {
     echo "│ [Vagrant] Making VM up..."
     vboxname=gosseract-test-${testcase}
     VAGRANT_VAGRANTFILE=${runtime} VIRTUALBOX_NAME=${vboxname} vagrant up --provider virtualbox | sed "s/^/│ /"
-    TESTRESULT=`cat test/runtimes/TESTRESULT.${testcase}.txt`
+    if [ -f test/runtimes/TESTRESULT.${testcase}.txt ]; then
+      TESTRESULT=`cat test/runtimes/TESTRESULT.${testcase}.txt`
+    fi
     VAGRANT_VAGRANTFILE=${runtime} vagrant halt | sed "s/^/│ /"
     if [ -n "${REMOVE}" ]; then
       echo "│ [Vagrant] Removing VM..."
       VAGRANT_VAGRANTFILE=${runtime} vagrant destroy -f | sed "s/^/│ /"
     fi
     if [ "${TESTRESULT}" != "0" ]; then
-      echo "Test failed: ${TESTCASE}"
+      echo "Test failed: ${testcase}"
       exit 1
     fi
     echo "└───────────── ${testcase} [OK]"
